@@ -7,7 +7,8 @@ output: github_document
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  gargle_oauth_email = "mara@rstudio.com"
 )
 ```
 
@@ -42,3 +43,65 @@ Before trying to import my data, I wanted to have at least _some_ idea of what t
 Indeed, the multiple headers seem to match up with information that's crammed into single cells in the Excel export. For example the value under **Fencing** and **Pts** on the website maps to the first number in the Excel **Fencing** column, and the number in parentheses next to it in Excel matches with **Fencing** **Pos**. The value of **Fencing** **Wins** is the same as the first number below the points and position in the Excel sheet, so I took a guess that the `# V - # D` formatting indicates the number of victories and defeats (further evidenced by the fact that the sum of those two numbers is the same, 36, for each athlete).
 
 OK, we're getting somewhere! All of this without even opening the _160-page_ PDF of rules and regulations. Please note that, if you know a domain expert, _ask them for help_! I do not know any modern pentathletes (I don't even think I know anyone who does all five of the activities involved--if that's you, hit me up), so I didn't have that option. And, _no_, I _don't_ want to talk about how much time I spent figuring out that **PWR Pts** stands for Pentathlon World Ranking Points, that **MP Points** stands for Modern Pentathlon Points, or that **HCP** stands for Handicap (this abbreviation is literally _never_ mentioned in the aforementioned 160-pager).
+
+## Data import with {googlesheets4}
+
+Since I don't have Excel on this computer (not a flex, just a fact), I brought the downloaded XLSX file into Google Sheets. So, hooray, we'll be using Jenny Bryan's newly updated [{googlesheets4}](https://googlesheets4.tidyverse.org/) package along with [{googledrive}](https://googledrive.tidyverse.org/) for finding the sheet by name. 
+
+```{r message=FALSE}
+library(tidyverse)
+library(googlesheets4)
+library(googledrive)
+```
+
+In order to access my drive, I'll be using the authorization function from googlesheets4, `gs4_auth()`, which allows you to either interactively select a pre-authorized account in R, or takes you to the browser to generate obtain a new token for your account.
+
+```{r}
+gs4_auth()
+```
+
+Now, we'll get the file with `googledrive::drive_get()`, and read in the sheet with `googlesheets4::read_sheet()`.
+
+```{r}
+w_finals_df <- drive_get("Competition_Results_Exports_UIPM_2021_Pentathlon_World_Championships") %>%
+  read_sheet(sheet = "Women Finals")
+```
+
+And let's take a quick peek at what that looks like…
+
+```{r}
+w_finals_df
+```
+To see how the cell values turned out, let's use `glimpse()`.
+
+```{r}
+glimpse(w_finals_df)
+```
+
+## Time to clean up
+
+OK, first thing's first: getting the different pieces of data into their own columns. To do this, I'm going to lean heavily on `tidyr::separate()`. I'm quite confident that someone better versed in regular expressions would be a little less hacky about things, but that's just life. I also like to use `janitor::clean_names()` with wild-caught data because I loathe dealing with letter cases and spaces.
+
+```{r}
+w_mp_finals <- w_finals_df %>%
+  janitor::clean_names() %>%
+  separate("name", into = c("name", "id"), sep = "\n") %>%
+  separate("id", into = c("id", "dob"), sep = " ") %>%
+  separate("fencing", into = c("fencing_pts", "f_rest"), sep = ' \\(') %>%
+  separate("f_rest", into = c("fencing_pos", "f_rest"), sep = '\\)\n') %>%
+  separate("f_rest", into = c("fencing_wins", "f_rest"), sep = " V - ") %>%
+  separate("f_rest", into = c("fencing_losses", NA), sep = " ") %>%
+  separate("swimming", into = c("swim_pts", "s_rest"), sep = ' \\(') %>%
+  separate("s_rest", into = c("swim_pos", "swim_time"), sep = '\\)\n') %>%
+  separate("riding", into = c("riding_pts", "r_rest"), sep = ' \\(') %>%
+  separate("r_rest", into = c("riding_pos", "riding_score"), sep = '\\)\n') %>%
+  separate("laser_run", into = c("laser_run_pts", "lr_rest"), sep = ' \\(') %>%
+  separate("lr_rest", into = c("lr_pos", "lr_time"), sep = '\\)\n')
+
+w_mp_finals
+```
+
+```{r}
+glimpse(w_mp_finals)
+```
+
