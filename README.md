@@ -26,7 +26,7 @@ minutes*, and then doing something called a *LASER RUN* (which involves
 running and shooting targets, and a bunch of other details I can’t be
 bothered with)! The Olympics website has a [one-minute explainer
 video](https://olympics.com/tokyo-2020/en/sports/modern-pentathlon/)
-that captures the sport in–wait for it–one minute! So peep that, if
+that captures the sport in – wait for it – one minute! So peep that, if
 you’re curious.
 
 ### Part 2: *Nasty* data formatting
@@ -62,7 +62,7 @@ were.
 ## Data detectivery
 
 Before trying to import my data, I wanted to have at least *some* idea
-of what they were–losing formatting isn’t going to make things *more*
+of what they were – losing formatting isn’t going to make things *more*
 obvious. Since the data look slightly different to how they were
 presented on the website (below, for example, is some of what you’ll see
 for [UIPM 2021 World Championship
@@ -88,4 +88,8 @@ OK, we’re getting somewhere! All of this without even opening the
 domain expert, *ask them for help*! I do not know any modern
 pentathletes (I don’t even think I know anyone who does all five of the
 activities involved–if that’s you, hit me up), so I didn’t have that
-option.
+option. And, *no*, I *don’t* want to talk about how much time I spent
+figuring out that **PWR Pts** stands for Pentathlon World Ranking
+Points, that **MP Points** stands for Modern Pentathlon Points, or that
+**HCP** stands for Handicap (this abbreviation is literally *never*
+mentioned in the aforementioned 160-pager).
