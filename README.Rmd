@@ -105,3 +105,13 @@ w_mp_finals
 glimpse(w_mp_finals)
 ```
 
+Now that we've separated our data out, let's use some of the `readr::parse_*()` functions (handy even when you're not reading the data in) to get the data types right. Using `readr::parse_number()` is especially nice when working with numeric data that has any character in front of or after the numbers themselves.
+
+```{r}
+w_mp_finals %>%
+  mutate(across(ends_with("pts") | ends_with("pos") | starts_with("fencing") | starts_with("riding"), readr::parse_double)) %>%
+  mutate(time_difference = readr::parse_number(time_difference)) %>%
+  mutate(dob = readr::parse_date(dob, "%Y-%m-%d")) %>%
+  glimpse()
+```
+
