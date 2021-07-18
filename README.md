@@ -194,8 +194,8 @@ wild-caught data because I loathe dealing with letter cases and spaces.
 ``` r
 w_mp_finals <- w_finals_df %>%
   janitor::clean_names() %>%
-  separate("name", into = c("name", "id"), sep = "\n") %>%
-  separate("id", into = c("id", "dob"), sep = " ") %>%
+  separate("name", into = c("name", "uipm_id"), sep = "\n") %>%
+  separate("uipm_id", into = c("uipm_id", "dob"), sep = " ") %>%
   separate("fencing", into = c("fencing_pts", "f_rest"), sep = ' \\(') %>%
   separate("f_rest", into = c("fencing_pos", "f_rest"), sep = '\\)\n') %>%
   separate("f_rest", into = c("fencing_wins", "f_rest"), sep = " V - ") %>%
@@ -209,18 +209,18 @@ w_mp_finals <- w_finals_df %>%
 
 w_mp_finals
 #> # A tibble: 36 x 20
-#>     rank name         id     dob     nation fencing_pts fencing_pos fencing_wins
-#>    <dbl> <chr>        <chr>  <chr>   <chr>  <chr>       <chr>       <chr>       
-#>  1     1 PROKOPENKO … W0399… 1985-0… BLR    246         1           24          
-#>  2     2 CLOUVEL Elo… W0394… 1989-0… FRA    220         8           20          
-#>  3     3 GULYAS Mich… W0423… 2000-1… HUN    233         3           22          
-#>  4     4 SCHLEU Anni… W0039… 1990-0… GER    214         14          19          
-#>  5     5 MICHELI Ele… W0408… 1999-0… ITA    214         13          19          
-#>  6     6 LANGREHR Re… W0400… 1998-0… GER    227         5           21          
-#>  7     7 VEGA Tamara  W0394… 1993-0… MEX    214         15          19          
-#>  8     8 KHOKHLOVA I… W0396… 1990-0… UKR    227         7           21          
-#>  9     9 KOHLMANN Ja… W0028… 1990-1… GER    220         9           20          
-#> 10    10 ASADAUSKAIT… W0020… 1984-0… LTU    212         17          18          
+#>     rank name         uipm_id dob    nation fencing_pts fencing_pos fencing_wins
+#>    <dbl> <chr>        <chr>   <chr>  <chr>  <chr>       <chr>       <chr>       
+#>  1     1 PROKOPENKO … W039969 1985-… BLR    246         1           24          
+#>  2     2 CLOUVEL Elo… W039469 1989-… FRA    220         8           20          
+#>  3     3 GULYAS Mich… W042365 2000-… HUN    233         3           22          
+#>  4     4 SCHLEU Anni… W003945 1990-… GER    214         14          19          
+#>  5     5 MICHELI Ele… W040837 1999-… ITA    214         13          19          
+#>  6     6 LANGREHR Re… W040067 1998-… GER    227         5           21          
+#>  7     7 VEGA Tamara  W039422 1993-… MEX    214         15          19          
+#>  8     8 KHOKHLOVA I… W039606 1990-… UKR    227         7           21          
+#>  9     9 KOHLMANN Ja… W002853 1990-… GER    220         9           20          
+#> 10    10 ASADAUSKAIT… W002054 1984-… LTU    212         17          18          
 #> # … with 26 more rows, and 12 more variables: fencing_losses <chr>,
 #> #   swim_pts <chr>, swim_pos <chr>, swim_time <chr>, riding_pts <chr>,
 #> #   riding_pos <chr>, riding_score <chr>, laser_run_pts <chr>, lr_pos <chr>,
@@ -233,7 +233,7 @@ glimpse(w_mp_finals)
 #> Columns: 20
 #> $ rank            <dbl> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,…
 #> $ name            <chr> "PROKOPENKO Anastasiya", "CLOUVEL Elodie", "GULYAS Mic…
-#> $ id              <chr> "W039969", "W039469", "W042365", "W003945", "W040837",…
+#> $ uipm_id         <chr> "W039969", "W039469", "W042365", "W003945", "W040837",…
 #> $ dob             <chr> "1985-09-20", "1989-01-14", "2000-10-24", "1990-04-03"…
 #> $ nation          <chr> "BLR", "FRA", "HUN", "GER", "ITA", "GER", "MEX", "UKR"…
 #> $ fencing_pts     <chr> "246", "220", "233", "214", "214", "227", "214", "227"…
@@ -257,12 +257,15 @@ Now that we’ve separated our data out, let’s use some of the
 `readr::parse_*()` functions (handy even when you’re not reading the
 data in) to get the data types right. Using `readr::parse_number()` is
 especially nice when working with numeric data that has any character in
-front of or after the numbers themselves.
+front of or after the numbers themselves. Since we’re converting
+`time_difference` to a number, we can also go ahead and replace the `NA`
+in that column with a zero.
 
 ``` r
 w_mp_finals %>%
   mutate(across(ends_with("pts") | ends_with("pos") | starts_with("fencing") | starts_with("riding"), readr::parse_double)) %>%
   mutate(time_difference = readr::parse_number(time_difference)) %>%
+  mutate(time_difference = replace_na(time_difference, 0)) %>%
   mutate(dob = readr::parse_date(dob, "%Y-%m-%d")) -> w_mp_finals
 
 glimpse(w_mp_finals)
@@ -270,7 +273,7 @@ glimpse(w_mp_finals)
 #> Columns: 20
 #> $ rank            <dbl> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,…
 #> $ name            <chr> "PROKOPENKO Anastasiya", "CLOUVEL Elodie", "GULYAS Mic…
-#> $ id              <chr> "W039969", "W039469", "W042365", "W003945", "W040837",…
+#> $ uipm_id         <chr> "W039969", "W039469", "W042365", "W003945", "W040837",…
 #> $ dob             <date> 1985-09-20, 1989-01-14, 2000-10-24, 1990-04-03, 1999-…
 #> $ nation          <chr> "BLR", "FRA", "HUN", "GER", "ITA", "GER", "MEX", "UKR"…
 #> $ fencing_pts     <dbl> 246, 220, 233, 214, 214, 227, 214, 227, 220, 212, 167,…
@@ -287,7 +290,7 @@ glimpse(w_mp_finals)
 #> $ lr_pos          <dbl> 1, 6, 10, 4, 8, 9, 7, 14, 16, 2, 3, 17, 22, 21, 15, 20…
 #> $ lr_time         <chr> "11:59.80", "12:37.10", "12:45.60", "12:27.90", "12:41…
 #> $ mp_points       <dbl> 1353, 1341, 1339, 1330, 1324, 1324, 1323, 1312, 1306, …
-#> $ time_difference <dbl> NA, 12, 14, 23, 29, 29, 30, 41, 47, 50, 55, 59, 62, 65…
+#> $ time_difference <dbl> 0, 12, 14, 23, 29, 29, 30, 41, 47, 50, 55, 59, 62, 65,…
 ```
 
 If I had a sense of what I might do with them, I would probably use
@@ -301,6 +304,13 @@ variables to see how the positions in the laser run can be different to
 the overall rank even though the athletes cross the finish line in the
 order of the final rankings.
 
+(Sidenote: I’m being a *little* sketchy in my intermediary variables
+below, as I temporarily use `lr_secs` to denote the seconds portion of
+the total time, and then ultimately use the same name to denote the
+final laser-run time in seconds. Because I’m playing things loose with
+that, I’m keeping the original character-encoded time by using
+`remove = FALSE` in my first `separate()` call).
+
 ``` r
 w_mp_finals %>%
   separate(lr_time, into = c("lr_mins", "lr_secs"), sep = ":", remove = FALSE) %>%
@@ -308,13 +318,14 @@ w_mp_finals %>%
   mutate(across(c("lr_secs", "time_difference"), lubridate::dseconds)) %>%
   mutate(lr_secs = lr_mins + lr_secs) %>%
   mutate(finish_time = lr_secs + time_difference) %>%
-  select(-lr_mins) %>%
-  glimpse()
+  select(-lr_mins) -> w_mp_finals
+  
+glimpse(w_mp_finals)
 #> Rows: 36
 #> Columns: 22
 #> $ rank            <dbl> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,…
 #> $ name            <chr> "PROKOPENKO Anastasiya", "CLOUVEL Elodie", "GULYAS Mic…
-#> $ id              <chr> "W039969", "W039469", "W042365", "W003945", "W040837",…
+#> $ uipm_id         <chr> "W039969", "W039469", "W042365", "W003945", "W040837",…
 #> $ dob             <date> 1985-09-20, 1989-01-14, 2000-10-24, 1990-04-03, 1999-…
 #> $ nation          <chr> "BLR", "FRA", "HUN", "GER", "ITA", "GER", "MEX", "UKR"…
 #> $ fencing_pts     <dbl> 246, 220, 233, 214, 214, 227, 214, 227, 220, 212, 167,…
@@ -332,8 +343,8 @@ w_mp_finals %>%
 #> $ lr_time         <chr> "11:59.80", "12:37.10", "12:45.60", "12:27.90", "12:41…
 #> $ lr_secs         <Duration> 719.8s (~12 minutes), 757.1s (~12.62 minutes), 76…
 #> $ mp_points       <dbl> 1353, 1341, 1339, 1330, 1324, 1324, 1323, 1312, 1306, …
-#> $ time_difference <Duration> NA, 12s, 14s, 23s, 29s, 29s, 30s, 41s, 47s, 50s, …
-#> $ finish_time     <Duration> NA, 769.1s (~12.82 minutes), 779.6s (~12.99 minut…
+#> $ time_difference <Duration> 0s, 12s, 14s, 23s, 29s, 29s, 30s, 41s, 47s, 50s, …
+#> $ finish_time     <Duration> 719.8s (~12 minutes), 769.1s (~12.82 minutes), 77…
 ```
 
 Huh! Now that I look at it this way, it seems that I *still* don’t

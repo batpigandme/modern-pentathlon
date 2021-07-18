@@ -85,8 +85,8 @@ OK, first thing's first: getting the different pieces of data into their own col
 ```{r clean-data}
 w_mp_finals <- w_finals_df %>%
   janitor::clean_names() %>%
-  separate("name", into = c("name", "id"), sep = "\n") %>%
-  separate("id", into = c("id", "dob"), sep = " ") %>%
+  separate("name", into = c("name", "uipm_id"), sep = "\n") %>%
+  separate("uipm_id", into = c("uipm_id", "dob"), sep = " ") %>%
   separate("fencing", into = c("fencing_pts", "f_rest"), sep = ' \\(') %>%
   separate("f_rest", into = c("fencing_pos", "f_rest"), sep = '\\)\n') %>%
   separate("f_rest", into = c("fencing_wins", "f_rest"), sep = " V - ") %>%
@@ -105,28 +105,33 @@ w_mp_finals
 glimpse(w_mp_finals)
 ```
 
-Now that we've separated our data out, let's use some of the `readr::parse_*()` functions (handy even when you're not reading the data in) to get the data types right. Using `readr::parse_number()` is especially nice when working with numeric data that has any character in front of or after the numbers themselves.
+Now that we've separated our data out, let's use some of the `readr::parse_*()` functions (handy even when you're not reading the data in) to get the data types right. Using `readr::parse_number()` is especially nice when working with numeric data that has any character in front of or after the numbers themselves. Since we're converting `time_difference` to a number, we can also go ahead and replace the `NA` in that column with a zero.
 
 ```{r format-results}
 w_mp_finals %>%
   mutate(across(ends_with("pts") | ends_with("pos") | starts_with("fencing") | starts_with("riding"), readr::parse_double)) %>%
   mutate(time_difference = readr::parse_number(time_difference)) %>%
+  mutate(time_difference = replace_na(time_difference, 0)) %>%
   mutate(dob = readr::parse_date(dob, "%Y-%m-%d")) -> w_mp_finals
 
 glimpse(w_mp_finals)
 ```
 
-If I had a sense of what I might do with them, I would probably use [`lubridate::duration()`](https://lubridate.tidyverse.org/reference/duration.html) and/or its related family of functions to deal with `swim_time`, `lr_time`, and `time_difference`. This is helpful because time-math is funky, and it's easy to forget what you're dealing with when you've got minutes, seconds, _and_ decimals in the mix. Actually, let's take a quick look at the laser-run time (`lr_time`) and `time_difference` variables to see how the positions in the laser run can be different to the overall rank even though the athletes cross the finish line in the order of the final rankings.
+If I had a sense of what I might do with them, I would probably use [`lubridate::duration()`](https://lubridate.tidyverse.org/reference/duration.html) and/or its related family of functions to deal with `swim_time`, `lr_time`, and `time_difference`. This is helpful because time-math is funky, and it's easy to forget what you're dealing with when you've got minutes, seconds, _and_ decimals in the mix. Actually, let's take a quick look at the laser-run time (`lr_time`) and `time_difference` variables to see how the positions in the laser run can be different to the overall rank even though the athletes cross the finish line in the order of the final rankings. 
 
-```{r}
+(Sidenote: I'm being a _little_ sketchy in my intermediary variables below, as I temporarily use `lr_secs` to denote the seconds portion of the total time, and then ultimately use the same name to denote the final laser-run time in seconds. Because I'm playing things loose with that, I'm keeping the original character-encoded time by using `remove = FALSE` in my first `separate()` call).
+
+```{r duration-stuff}
 w_mp_finals %>%
   separate(lr_time, into = c("lr_mins", "lr_secs"), sep = ":", remove = FALSE) %>%
   mutate(lr_mins = lubridate::dminutes(as.numeric(lr_mins))) %>%
   mutate(across(c("lr_secs", "time_difference"), lubridate::dseconds)) %>%
   mutate(lr_secs = lr_mins + lr_secs) %>%
   mutate(finish_time = lr_secs + time_difference) %>%
-  select(-lr_mins) %>%
-  glimpse()
+  select(-lr_mins) -> w_mp_finals
+  
+glimpse(w_mp_finals)
 ```
 
 Huh! Now that I look at it this way, it seems that I _still_ don't understand how that last part works. Clearly I need to go back and review the rules and regulations of the Modern Pentathlon.
+
