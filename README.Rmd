@@ -46,7 +46,7 @@ OK, we're getting somewhere! All of this without even opening the _160-page_ PDF
 
 ## Data import with {googlesheets4}
 
-Since I don't have Excel on this computer (not a flex, just a fact), I brought the downloaded XLSX file into Google Sheets. So, hooray, we'll be using Jenny Bryan's newly updated [{googlesheets4}](https://googlesheets4.tidyverse.org/) package along with [{googledrive}](https://googledrive.tidyverse.org/) for finding the sheet by name. 
+Since I don't have Excel on this computer (not a flex, just a fact), I brought the downloaded XLSX file into Google Sheets. So, hooray, we'll be using Jenny Bryan's newly updated [{googlesheets4}](https://googlesheets4.tidyverse.org/) package along with [{googledrive}](https://googledrive.tidyverse.org/) for finding the file by name. 
 
 ```{r libraries, message=FALSE}
 library(tidyverse)
@@ -168,7 +168,9 @@ m_mp_finals <- drive_get("Competition_Results_Exports_UIPM_2021_Pentathlon_World
 glimpse(m_mp_finals)  
 ```
 
-If we had any doubts about my misunderstanding the way that the time difference plays into the final ranking, the men's finals make it clear that I am most definitely wrong. 😬
+If we had any doubts about my misunderstanding the way that the time difference plays into the final ranking, the men's finals make it clear that I am most definitely wrong. 😬 
+
+What makes me so sure? Well, given they're supposed to cross the finish line in the order of their ranking, `finish_time` would go lowest to highest/match the order of `rank`, below.
 
 ```{r}
 m_mp_finals %>%

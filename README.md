@@ -102,7 +102,7 @@ brought the downloaded XLSX file into Google Sheets. So, hooray, we’ll
 be using Jenny Bryan’s newly updated
 [{googlesheets4}](https://googlesheets4.tidyverse.org/) package along
 with [{googledrive}](https://googledrive.tidyverse.org/) for finding the
-sheet by name.
+file by name.
 
 ``` r
 library(tidyverse)
@@ -136,7 +136,9 @@ and read in the sheet with
 ``` r
 w_finals_df <- drive_get("Competition_Results_Exports_UIPM_2021_Pentathlon_World_Championships") %>%
   read_sheet(sheet = "Women Finals")
+#> Auto-refreshing stale OAuth token.
 #> ✓ The input `path` resolved to exactly 1 file.
+#> Auto-refreshing stale OAuth token.
 #> Reading from "Competition_Results_Exports_UIPM_2021_Pentathlon_World_Championships"
 #> Range "'Women Finals'"
 ```
@@ -418,6 +420,10 @@ glimpse(m_mp_finals)
 If we had any doubts about my misunderstanding the way that the time
 difference plays into the final ranking, the men’s finals make it clear
 that I am most definitely wrong. 😬
+
+What makes me so sure? Well, given they’re supposed to cross the finish
+line in the order of their ranking, `finish_time` would go lowest to
+highest/match the order of `rank`, below.
 
 ``` r
 m_mp_finals %>%
