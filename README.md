@@ -22,11 +22,12 @@ the more confused I became.
 
 Nevertheless, I can’t help but to be fascinated by a sport that consists
 of: fencing, swimming, show jumping on a horse you’ve only known for *20
-minutes*, and then doing something called a *LASER RUN* (which involves
-running and shooting targets, and a bunch of other details I can’t be
-bothered with)! The Olympics website has a [one-minute explainer
+minutes*, and then doing something called a ***LASER RUN*** (which
+involves running and shooting targets, and a bunch of other details I
+can’t be bothered with)! The Olympics website has a [one-minute
+explainer
 video](https://olympics.com/tokyo-2020/en/sports/modern-pentathlon/)
-that captures the sport in – wait for it – one minute! So peep that, if
+that captures the sport in—wait for it—one minute! So peep that, if
 you’re curious.
 
 ### Part 2: *Nasty* data formatting
@@ -38,7 +39,7 @@ and [Patrick Ward’s](https://twitter.com/OSPpatrick) TidyX Screencast,
 often encounter when looking for various sports stats in the wild; it’s
 formatted in a way that’s useful to *someone*, but that someone is *not
 me* (or a database, for that matter). This can be particularly galling
-when you’re in a so-close-but-so-far situation–e.g. they’re letting you
+when you’re in a so-close-but-so-far situation—e.g. they’re letting you
 export it to a familiar format, such as excel, and have all the
 different pieces of data, but have smashed it together in such a way
 that it’s a far cry from “tidy,” rectangular data.
@@ -62,7 +63,7 @@ were.
 ## Data detectivery
 
 Before trying to import my data, I wanted to have at least *some* idea
-of what they were – losing formatting isn’t going to make things *more*
+of what they were—losing formatting isn’t going to make things *more*
 obvious. Since the data look slightly different to how they were
 presented on the website (below, for example, is some of what you’ll see
 for [UIPM 2021 World Championship
@@ -87,7 +88,7 @@ OK, we’re getting somewhere! All of this without even opening the
 *160-page* PDF of rules and regulations. Please note that, if you know a
 domain expert, *ask them for help*! I do not know any modern
 pentathletes (I don’t even think I know anyone who does all five of the
-activities involved–if that’s you, hit me up), so I didn’t have that
+activities involved—if that’s you, hit me up), so I didn’t have that
 option. And, *no*, I *don’t* want to talk about how much time I spent
 figuring out that **PWR Pts** stands for Pentathlon World Ranking
 Points, that **MP Points** stands for Modern Pentathlon Points, or that
@@ -109,37 +110,32 @@ library(googlesheets4)
 library(googledrive)
 ```
 
-In order to access my drive, I’ll be using the authorization function
-from googlesheets4, `gs4_auth()`, which allows you to either
-interactively select a pre-authorized account in R, or takes you to the
-browser to generate obtain a new token for your account.
+In order to access my Google Sheets and Drive accounts, respectively,
+I’ll be using the authorization function from googlesheets4,
+[`gs4_auth()`](https://googlesheets4.tidyverse.org/reference/gs4_auth.html),
+which allows you to either interactively select a pre-authorized account
+in R, or takes you to the browser to generate obtain a new token for
+your account. For posterity’s sake, I’m also showing the function from
+the googledrive package,
+[`drive_auth()`](https://googledrive.tidyverse.org/reference/drive_auth.html),
+which does the same thing. To learn more about authenticating your
+account in an R Markdown document, see the [Non-interactive
+auth](https://gargle.r-lib.org/articles/non-interactive-auth.html#sidebar-2-i-just-want-my-rmd-to-render)
+article for [{gargle}](https://gargle.r-lib.org/).
 
 ``` r
-gs4_auth()
-#> ℹ Suitable tokens found in the cache, associated with these emails:
-#> • 'mara@rstudio.com'
-#> • 'maraaverick@gmail.com'
-#>   Defaulting to the first email.
-#> ! Using an auto-discovered, cached token.
-#>   To suppress this message, modify your code or options to clearly consent to
-#>   the use of a cached token.
-#>   See gargle's "Non-interactive auth" vignette for more details:
-#>   <https://gargle.r-lib.org/articles/non-interactive-auth.html>
-#> ℹ The googlesheets4 package is using a cached token for 'mara@rstudio.com'.
+gs4_auth(email = "mara@rstudio.com")
+drive_auth(email = "mara@rstudio.com")
 ```
 
-Now, we’ll get the file with `googledrive::drive_get()`, and read in the
-sheet with `googlesheets4::read_sheet()`.
+Now, we’ll get the file with
+[`googledrive::drive_get()`](https://googledrive.tidyverse.org/reference/drive_get.html),
+and read in the sheet with
+[`googlesheets4::read_sheet()`](https://googlesheets4.tidyverse.org/reference/range_read.html).
 
 ``` r
 w_finals_df <- drive_get("Competition_Results_Exports_UIPM_2021_Pentathlon_World_Championships") %>%
   read_sheet(sheet = "Women Finals")
-#> ! Using an auto-discovered, cached token.
-#>   To suppress this message, modify your code or options to clearly consent to
-#>   the use of a cached token.
-#>   See gargle's "Non-interactive auth" vignette for more details:
-#>   <https://gargle.r-lib.org/articles/non-interactive-auth.html>
-#> ℹ The googledrive package is using a cached token for 'mara@rstudio.com'.
 #> ✓ The input `path` resolved to exactly 1 file.
 #> Reading from "Competition_Results_Exports_UIPM_2021_Pentathlon_World_Championships"
 #> Range "'Women Finals'"
@@ -165,7 +161,8 @@ w_finals_df
 #> # … with 26 more rows, and 1 more variable: Time Difference <chr>
 ```
 
-To see how the cell values turned out, let’s use `glimpse()`.
+To see how the cell values turned out, let’s use
+[`glimpse()`](https://pillar.r-lib.org/reference/glimpse.html).
 
 ``` r
 glimpse(w_finals_df)
@@ -186,10 +183,13 @@ glimpse(w_finals_df)
 
 OK, first thing’s first: getting the different pieces of data into their
 own columns. To do this, I’m going to lean heavily on
-`tidyr::separate()`. I’m quite confident that someone better versed in
-regular expressions would be a little less hacky about things, but
-that’s just life. I also like to use `janitor::clean_names()` with
-wild-caught data because I loathe dealing with letter cases and spaces.
+[`tidyr::separate()`](https://tidyr.tidyverse.org/reference/separate.html).
+I’m quite confident that someone better versed in regular expressions
+would be a little less hacky about things, but that’s just life. I also
+like to use
+[`janitor::clean_names()`](https://sfirke.github.io/janitor/reference/clean_names.html)
+with wild-caught data because I loathe dealing with letter cases and
+spaces.
 
 ``` r
 w_mp_finals <- w_finals_df %>%
@@ -254,10 +254,12 @@ glimpse(w_mp_finals)
 ```
 
 Now that we’ve separated our data out, let’s use some of the
-`readr::parse_*()` functions (handy even when you’re not reading the
-data in) to get the data types right. Using `readr::parse_number()` is
-especially nice when working with numeric data that has any character in
-front of or after the numbers themselves. Since we’re converting
+[`readr::parse_*()`](https://readr.tidyverse.org/reference/parse_atomic.html)
+functions (handy even when you’re not reading the data in) to get the
+data types right. Using
+[`readr::parse_number()`](https://readr.tidyverse.org/reference/parse_number.html)
+is especially nice when working with numeric data that has any character
+in front of or after the numbers themselves. Since we’re converting
 `time_difference` to a number, we can also go ahead and replace the `NA`
 in that column with a zero.
 
@@ -265,8 +267,8 @@ in that column with a zero.
 w_mp_finals %>%
   mutate(across(ends_with("pts") | ends_with("pos") | starts_with("fencing") | starts_with("riding"), readr::parse_double)) %>%
   mutate(time_difference = readr::parse_number(time_difference)) %>%
-  mutate(time_difference = replace_na(time_difference, 0)) %>%
-  mutate(dob = readr::parse_date(dob, "%Y-%m-%d")) -> w_mp_finals
+  mutate(dob = readr::parse_date(dob, "%Y-%m-%d")) %>%
+  mutate(time_difference = replace_na(time_difference, 0)) -> w_mp_finals
 
 glimpse(w_mp_finals)
 #> Rows: 36
@@ -350,3 +352,88 @@ glimpse(w_mp_finals)
 Huh! Now that I look at it this way, it seems that I *still* don’t
 understand how that last part works. Clearly I need to go back and
 review the rules and regulations of the Modern Pentathlon.
+
+To show you what this would all look like in one *long* series of pipes,
+I’ll use the results from the same Excel file for the *Men’s* finals.
+(Caution: A series of pipes this long is likely hazardous to your
+health…also, you shouldn’t copy and paste this much code in real life).
+
+``` r
+m_mp_finals <- drive_get("Competition_Results_Exports_UIPM_2021_Pentathlon_World_Championships") %>%
+  read_sheet(sheet = "Men Finals") %>%
+  janitor::clean_names() %>%
+  separate("name", into = c("name", "uipm_id"), sep = "\n") %>%
+  separate("uipm_id", into = c("uipm_id", "dob"), sep = " ") %>%
+  separate("fencing", into = c("fencing_pts", "f_rest"), sep = ' \\(') %>%
+  separate("f_rest", into = c("fencing_pos", "f_rest"), sep = '\\)\n') %>%
+  separate("f_rest", into = c("fencing_wins", "f_rest"), sep = " V - ") %>%
+  separate("f_rest", into = c("fencing_losses", NA), sep = " ") %>%
+  separate("swimming", into = c("swim_pts", "s_rest"), sep = ' \\(') %>%
+  separate("s_rest", into = c("swim_pos", "swim_time"), sep = '\\)\n') %>%
+  separate("riding", into = c("riding_pts", "r_rest"), sep = ' \\(') %>%
+  separate("r_rest", into = c("riding_pos", "riding_score"), sep = '\\)\n') %>%
+  separate("laser_run", into = c("laser_run_pts", "lr_rest"), sep = ' \\(') %>%
+  separate("lr_rest", into = c("lr_pos", "lr_time"), sep = '\\)\n') %>%
+  mutate(across(ends_with("pts") | ends_with("pos") | starts_with("fencing") | starts_with("riding"), readr::parse_double)) %>%
+  mutate(time_difference = readr::parse_number(time_difference)) %>%
+  mutate(dob = readr::parse_date(dob, "%Y-%m-%d")) %>%
+  mutate(time_difference = replace_na(time_difference, 0)) %>%
+  separate(lr_time, into = c("lr_mins", "lr_secs"), sep = ":", remove = FALSE) %>%
+  mutate(lr_mins = lubridate::dminutes(as.numeric(lr_mins))) %>%
+  mutate(across(c("lr_secs", "time_difference"), lubridate::dseconds)) %>%
+  mutate(lr_secs = lr_mins + lr_secs) %>%
+  mutate(finish_time = lr_secs + time_difference) %>%
+  select(-lr_mins)
+#> ✓ The input `path` resolved to exactly 1 file.
+#> Reading from "Competition_Results_Exports_UIPM_2021_Pentathlon_World_Championships"
+#> Range "'Men Finals'"
+
+glimpse(m_mp_finals)  
+#> Rows: 36
+#> Columns: 22
+#> $ rank            <dbl> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,…
+#> $ name            <chr> "MAROSI Adam", "LIFANOV Alexander", "ELGENDY Ahmed", "…
+#> $ uipm_id         <chr> "M000964", "M040502", "M042113", "M040924", "M039549",…
+#> $ dob             <date> 1984-07-25, 1996-04-15, 2000-03-01, 1997-06-01, 1994-…
+#> $ nation          <chr> "HUN", "RMPF", "EGY", "EGY", "GER", "KOR", "BLR", "KOR…
+#> $ fencing_pts     <dbl> 256, 262, 196, 227, 217, 214, 244, 228, 233, 214, 232,…
+#> $ fencing_pos     <dbl> 2, 1, 23, 10, 12, 14, 5, 8, 6, 13, 7, 9, 11, 26, 4, 20…
+#> $ fencing_wins    <dbl> 26, 27, 16, 21, 19, 19, 24, 21, 22, 19, 22, 21, 20, 15…
+#> $ fencing_losses  <dbl> 9, 8, 19, 14, 16, 16, 11, 14, 13, 16, 13, 14, 15, 20, …
+#> $ swim_pts        <dbl> 302, 294, 305, 284, 296, 306, 300, 300, 304, 297, 292,…
+#> $ swim_pos        <dbl> 11, 23, 5, 34, 18, 3, 14, 13, 6, 17, 25, 20, 24, 31, 3…
+#> $ swim_time       <chr> "02:04.36", "02:08.29", "02:02.68", "02:13.05", "02:07…
+#> $ riding_pts      <dbl> 300, 300, 292, 297, 300, 284, 286, 273, 259, 272, 286,…
+#> $ riding_pos      <dbl> 2, 5, 15, 11, 3, 26, 24, 29, 33, 30, 25, 10, 21, 14, 2…
+#> $ riding_score    <dbl> 66, 64, 68, 70, 65, 69, 65, 73, 73, 62, 66, 69, 70, 68…
+#> $ laser_run_pts   <dbl> 577, 570, 624, 604, 596, 603, 575, 602, 605, 615, 585,…
+#> $ lr_pos          <dbl> 19, 25, 1, 4, 10, 5, 22, 7, 3, 2, 14, 23, 21, 6, 28, 1…
+#> $ lr_time         <chr> "12:03.50", "12:10.30", "11:16.90", "11:36.13", "11:44…
+#> $ lr_secs         <Duration> 723.5s (~12.06 minutes), 730.3s (~12.17 minutes),…
+#> $ mp_points       <dbl> 1435, 1426, 1417, 1412, 1409, 1407, 1405, 1403, 1401, …
+#> $ time_difference <Duration> 0s, 9s, 18s, 23s, 26s, 28s, 30s, 32s, 34s, 37s, 4…
+#> $ finish_time     <Duration> 723.5s (~12.06 minutes), 739.3s (~12.32 minutes),…
+```
+
+If we had any doubts about my misunderstanding the way that the time
+difference plays into the final ranking, the men’s finals make it clear
+that I am most definitely wrong. 😬
+
+``` r
+m_mp_finals %>%
+  select(c(rank, lr_pos, lr_time, time_difference, finish_time))
+#> # A tibble: 36 x 5
+#>     rank lr_pos lr_time  time_difference finish_time             
+#>    <dbl>  <dbl> <chr>    <Duration>      <Duration>              
+#>  1     1     19 12:03.50 0s              723.5s (~12.06 minutes) 
+#>  2     2     25 12:10.30 9s              739.3s (~12.32 minutes) 
+#>  3     3      1 11:16.90 18s             694.9s (~11.58 minutes) 
+#>  4     4      4 11:36.13 23s             719.13s (~11.99 minutes)
+#>  5     5     10 11:44.10 26s             730.1s (~12.17 minutes) 
+#>  6     6      5 11:37.00 28s             725s (~12.08 minutes)   
+#>  7     7     22 12:05.70 30s             755.7s (~12.6 minutes)  
+#>  8     8      7 11:38.10 32s             730.1s (~12.17 minutes) 
+#>  9     9      3 11:35.20 34s             729.2s (~12.15 minutes) 
+#> 10    10      2 11:25.10 37s             722.1s (~12.04 minutes) 
+#> # … with 26 more rows
+```

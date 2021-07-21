@@ -22,12 +22,12 @@ Playing around with results from [Union Internationale de Pentathlon Moderne (UI
 
 The scoring of the modern pentathlon remains utterly inscrutable to me. You can _kind of_ get the gist of it from this article, [Modern Pentathlon Scoring](https://www.realbuzz.com/articles-interests/sports-activities/article/modern-pentathlon-scoring/). But, to be honest, the more I read (including the bulk of the _lengthy_ [UIPM Competition Rules and Regulations](https://www.uipmworld.org/sites/default/files/uipm_comp_rules_and_reg_2017_a5.pdf)), the more confused I became.
 
-Nevertheless, I can't help but to be fascinated by a sport that consists of: fencing, swimming, show jumping on a horse you've only known for _20 minutes_, and then doing something called a _LASER RUN_ (which involves running and shooting targets, and a bunch of other details I can't be bothered with)! The Olympics website has a [one-minute explainer video](https://olympics.com/tokyo-2020/en/sports/modern-pentathlon/) that captures the sport in -- wait for it -- one minute! So peep that, if you're curious.
+Nevertheless, I can't help but to be fascinated by a sport that consists of: fencing, swimming, show jumping on a horse you've only known for _20 minutes_, and then doing something called a *__LASER RUN__* (which involves running and shooting targets, and a bunch of other details I can't be bothered with)! The Olympics website has a [one-minute explainer video](https://olympics.com/tokyo-2020/en/sports/modern-pentathlon/) that captures the sport in&mdash;wait for it&mdash;one minute! So peep that, if you're curious.
 
 ### Part 2: _Nasty_ data formatting
 
 In a recent episode of [Ellis Hughes](https://twitter.com/ellis_hughes) and [Patrick Ward's](https://twitter.com/OSPpatrick) TidyX Screencast, [TidyX Episode 64 | Data Cleaning - Ugly Excel Files Part 1](https://youtu.be/R8LK1SNH9p0), the hosts took on the kind of data I often encounter when looking for various sports stats in the wild; it's formatted in a way that's useful to _someone_, but that someone is _not me_ (or a database, for that matter).
-This can be particularly galling when you're in a so-close-but-so-far situation--e.g. they're letting you export it to a familiar format, such as excel, and have all the different pieces of data, but have smashed it together in such a way that it's a far cry from "tidy," rectangular data.
+This can be particularly galling when you're in a so-close-but-so-far situation&mdash;e.g. they're letting you export it to a familiar format, such as excel, and have all the different pieces of data, but have smashed it together in such a way that it's a far cry from "tidy," rectangular data.
 
 UIPM indeed lets you export its world championships results data as one big [Excel file](https://www.uipmworld.org/event/uipm-2021-pentathlon-world-championships), but then you take a peek and it looks like this…
 
@@ -37,12 +37,12 @@ These are the moments that make you remember the value of domain expertise. At a
 
 ## Data detectivery
 
-Before trying to import my data, I wanted to have at least _some_ idea of what they were -- losing formatting isn't going to make things _more_ obvious. Since the data look slightly different to how they were presented on the website (below, for example, is some of what you'll see for [UIPM 2021 World Championship Results](https://www.uipmworld.org/event/uipm-2021-pentathlon-world-championships) if you select **Women** and **Final**), I thought that might provide some more insight.
+Before trying to import my data, I wanted to have at least _some_ idea of what they were&mdash;losing formatting isn't going to make things _more_ obvious. Since the data look slightly different to how they were presented on the website (below, for example, is some of what you'll see for [UIPM 2021 World Championship Results](https://www.uipmworld.org/event/uipm-2021-pentathlon-world-championships) if you select **Women** and **Final**), I thought that might provide some more insight.
 
 ![Screenshot of first few records for Women's Finals results of UIPM for 2021 World Championship Final Results](https://i.imgur.com/qWgpF0m.png)
 Indeed, the multiple headers seem to match up with information that's crammed into single cells in the Excel export. For example the value under **Fencing** and **Pts** on the website maps to the first number in the Excel **Fencing** column, and the number in parentheses next to it in Excel matches with **Fencing** **Pos**. The value of **Fencing** **Wins** is the same as the first number below the points and position in the Excel sheet, so I took a guess that the `# V - # D` formatting indicates the number of victories and defeats (further evidenced by the fact that the sum of those two numbers is the same, 36, for each athlete).
 
-OK, we're getting somewhere! All of this without even opening the _160-page_ PDF of rules and regulations. Please note that, if you know a domain expert, _ask them for help_! I do not know any modern pentathletes (I don't even think I know anyone who does all five of the activities involved--if that's you, hit me up), so I didn't have that option. And, _no_, I _don't_ want to talk about how much time I spent figuring out that **PWR Pts** stands for Pentathlon World Ranking Points, that **MP Points** stands for Modern Pentathlon Points, or that **HCP** stands for Handicap (this abbreviation is literally _never_ mentioned in the aforementioned 160-pager).
+OK, we're getting somewhere! All of this without even opening the _160-page_ PDF of rules and regulations. Please note that, if you know a domain expert, _ask them for help_! I do not know any modern pentathletes (I don't even think I know anyone who does all five of the activities involved&mdash;if that's you, hit me up), so I didn't have that option. And, _no_, I _don't_ want to talk about how much time I spent figuring out that **PWR Pts** stands for Pentathlon World Ranking Points, that **MP Points** stands for Modern Pentathlon Points, or that **HCP** stands for Handicap (this abbreviation is literally _never_ mentioned in the aforementioned 160-pager).
 
 ## Data import with {googlesheets4}
 
@@ -54,13 +54,14 @@ library(googlesheets4)
 library(googledrive)
 ```
 
-In order to access my drive, I'll be using the authorization function from googlesheets4, `gs4_auth()`, which allows you to either interactively select a pre-authorized account in R, or takes you to the browser to generate obtain a new token for your account.
+In order to access my Google Sheets and Drive accounts, respectively, I'll be using the authorization function from googlesheets4, [`gs4_auth()`](https://googlesheets4.tidyverse.org/reference/gs4_auth.html), which allows you to either interactively select a pre-authorized account in R, or takes you to the browser to generate obtain a new token for your account. For posterity's sake, I'm also showing the function from the googledrive package, [`drive_auth()`](https://googledrive.tidyverse.org/reference/drive_auth.html), which does the same thing. To learn more about authenticating your account in an R Markdown document, see the [Non-interactive auth](https://gargle.r-lib.org/articles/non-interactive-auth.html#sidebar-2-i-just-want-my-rmd-to-render) article for [{gargle}](https://gargle.r-lib.org/).  
 
 ```{r gs4-auth}
-gs4_auth()
+gs4_auth(email = "mara@rstudio.com")
+drive_auth(email = "mara@rstudio.com")
 ```
 
-Now, we'll get the file with `googledrive::drive_get()`, and read in the sheet with `googlesheets4::read_sheet()`.
+Now, we'll get the file with [`googledrive::drive_get()`](https://googledrive.tidyverse.org/reference/drive_get.html), and read in the sheet with [`googlesheets4::read_sheet()`](https://googlesheets4.tidyverse.org/reference/range_read.html).  
 
 ```{r import-data}
 w_finals_df <- drive_get("Competition_Results_Exports_UIPM_2021_Pentathlon_World_Championships") %>%
@@ -72,7 +73,7 @@ And let's take a quick peek at what that looks like…
 ```{r raw-data}
 w_finals_df
 ```
-To see how the cell values turned out, let's use `glimpse()`.
+To see how the cell values turned out, let's use [`glimpse()`](https://pillar.r-lib.org/reference/glimpse.html).
 
 ```{r glimpse-raw}
 glimpse(w_finals_df)
@@ -80,7 +81,7 @@ glimpse(w_finals_df)
 
 ## Time to clean up
 
-OK, first thing's first: getting the different pieces of data into their own columns. To do this, I'm going to lean heavily on `tidyr::separate()`. I'm quite confident that someone better versed in regular expressions would be a little less hacky about things, but that's just life. I also like to use `janitor::clean_names()` with wild-caught data because I loathe dealing with letter cases and spaces.
+OK, first thing's first: getting the different pieces of data into their own columns. To do this, I'm going to lean heavily on [`tidyr::separate()`](https://tidyr.tidyverse.org/reference/separate.html). I'm quite confident that someone better versed in regular expressions would be a little less hacky about things, but that's just life. I also like to use [`janitor::clean_names()`](https://sfirke.github.io/janitor/reference/clean_names.html) with wild-caught data because I loathe dealing with letter cases and spaces.
 
 ```{r clean-data}
 w_mp_finals <- w_finals_df %>%
@@ -105,14 +106,14 @@ w_mp_finals
 glimpse(w_mp_finals)
 ```
 
-Now that we've separated our data out, let's use some of the `readr::parse_*()` functions (handy even when you're not reading the data in) to get the data types right. Using `readr::parse_number()` is especially nice when working with numeric data that has any character in front of or after the numbers themselves. Since we're converting `time_difference` to a number, we can also go ahead and replace the `NA` in that column with a zero.
+Now that we've separated our data out, let's use some of the [`readr::parse_*()`](https://readr.tidyverse.org/reference/parse_atomic.html) functions (handy even when you're not reading the data in) to get the data types right. Using [`readr::parse_number()`](https://readr.tidyverse.org/reference/parse_number.html) is especially nice when working with numeric data that has any character in front of or after the numbers themselves. Since we're converting `time_difference` to a number, we can also go ahead and replace the `NA` in that column with a zero.
 
 ```{r format-results}
 w_mp_finals %>%
   mutate(across(ends_with("pts") | ends_with("pos") | starts_with("fencing") | starts_with("riding"), readr::parse_double)) %>%
   mutate(time_difference = readr::parse_number(time_difference)) %>%
-  mutate(time_difference = replace_na(time_difference, 0)) %>%
-  mutate(dob = readr::parse_date(dob, "%Y-%m-%d")) -> w_mp_finals
+  mutate(dob = readr::parse_date(dob, "%Y-%m-%d")) %>%
+  mutate(time_difference = replace_na(time_difference, 0)) -> w_mp_finals
 
 glimpse(w_mp_finals)
 ```
@@ -134,4 +135,45 @@ glimpse(w_mp_finals)
 ```
 
 Huh! Now that I look at it this way, it seems that I _still_ don't understand how that last part works. Clearly I need to go back and review the rules and regulations of the Modern Pentathlon.
+
+To show you what this would all look like in one _long_ series of pipes, I'll use the results from the same Excel file for the _Men's_ finals. (Caution: A series of pipes this long is likely hazardous to your health...also, you shouldn't copy and paste this much code in real life).
+
+```{r mens-finals}
+m_mp_finals <- drive_get("Competition_Results_Exports_UIPM_2021_Pentathlon_World_Championships") %>%
+  read_sheet(sheet = "Men Finals") %>%
+  janitor::clean_names() %>%
+  separate("name", into = c("name", "uipm_id"), sep = "\n") %>%
+  separate("uipm_id", into = c("uipm_id", "dob"), sep = " ") %>%
+  separate("fencing", into = c("fencing_pts", "f_rest"), sep = ' \\(') %>%
+  separate("f_rest", into = c("fencing_pos", "f_rest"), sep = '\\)\n') %>%
+  separate("f_rest", into = c("fencing_wins", "f_rest"), sep = " V - ") %>%
+  separate("f_rest", into = c("fencing_losses", NA), sep = " ") %>%
+  separate("swimming", into = c("swim_pts", "s_rest"), sep = ' \\(') %>%
+  separate("s_rest", into = c("swim_pos", "swim_time"), sep = '\\)\n') %>%
+  separate("riding", into = c("riding_pts", "r_rest"), sep = ' \\(') %>%
+  separate("r_rest", into = c("riding_pos", "riding_score"), sep = '\\)\n') %>%
+  separate("laser_run", into = c("laser_run_pts", "lr_rest"), sep = ' \\(') %>%
+  separate("lr_rest", into = c("lr_pos", "lr_time"), sep = '\\)\n') %>%
+  mutate(across(ends_with("pts") | ends_with("pos") | starts_with("fencing") | starts_with("riding"), readr::parse_double)) %>%
+  mutate(time_difference = readr::parse_number(time_difference)) %>%
+  mutate(dob = readr::parse_date(dob, "%Y-%m-%d")) %>%
+  mutate(time_difference = replace_na(time_difference, 0)) %>%
+  separate(lr_time, into = c("lr_mins", "lr_secs"), sep = ":", remove = FALSE) %>%
+  mutate(lr_mins = lubridate::dminutes(as.numeric(lr_mins))) %>%
+  mutate(across(c("lr_secs", "time_difference"), lubridate::dseconds)) %>%
+  mutate(lr_secs = lr_mins + lr_secs) %>%
+  mutate(finish_time = lr_secs + time_difference) %>%
+  select(-lr_mins)
+
+glimpse(m_mp_finals)  
+```
+
+If we had any doubts about my misunderstanding the way that the time difference plays into the final ranking, the men's finals make it clear that I am most definitely wrong. 😬
+
+```{r}
+m_mp_finals %>%
+  select(c(rank, lr_pos, lr_time, time_difference, finish_time))
+```
+
+
 
