@@ -174,10 +174,20 @@ If we had any doubts about my misunderstanding the way that the time difference 
 
 What makes me so sure? Well, given they're supposed to cross the finish line in the order of their ranking, `finish_time` would go lowest to highest/match the order of `rank`, below.
 
-```{r}
+```{r mens-times}
 m_mp_finals %>%
   select(c(rank, lr_pos, lr_time, time_difference, finish_time))
 ```
 
+For a quick sanity check, let's make sure that the points for the individual events (the variables with the `_pts` suffixes) add up to `mp_points`. This could be _a bit_ off, due to various penalties in the rules and regulations that, theoretically, might be deducted from the final score and not from an individual event. But that should be an anomaly.
+
+```{r mens-pts}
+m_mp_finals %>%
+  select(c(rank, ends_with("_pts"), mp_points)) %>%
+  group_by(rank) %>%
+  mutate("event_pt_sum" = sum(fencing_pts, swim_pts, riding_pts, laser_run_pts))
+```
+
+Well, that looks OK... Mysteries of the modern pentathlon abound.
 
 

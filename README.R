@@ -105,7 +105,14 @@ m_mp_finals <- drive_get("Competition_Results_Exports_UIPM_2021_Pentathlon_World
 glimpse(m_mp_finals)  
 
 
-## --------------------------------------------------------------------------------
+## ----mens-times------------------------------------------------------------------
 m_mp_finals %>%
   select(c(rank, lr_pos, lr_time, time_difference, finish_time))
+
+
+## ----mens-pts--------------------------------------------------------------------
+m_mp_finals %>%
+  select(c(rank, ends_with("_pts"), mp_points)) %>%
+  group_by(rank) %>%
+  mutate("event_pt_sum" = sum(fencing_pts, swim_pts, riding_pts, laser_run_pts))
 

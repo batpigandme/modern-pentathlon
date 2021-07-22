@@ -136,9 +136,7 @@ and read in the sheet with
 ``` r
 w_finals_df <- drive_get("Competition_Results_Exports_UIPM_2021_Pentathlon_World_Championships") %>%
   read_sheet(sheet = "Women Finals")
-#> Auto-refreshing stale OAuth token.
 #> ✓ The input `path` resolved to exactly 1 file.
-#> Auto-refreshing stale OAuth token.
 #> Reading from "Competition_Results_Exports_UIPM_2021_Pentathlon_World_Championships"
 #> Range "'Women Finals'"
 ```
@@ -445,3 +443,34 @@ m_mp_finals %>%
 #> 10    10      2 11:25.10 37s             722.1s (~12.04 minutes) 
 #> # … with 26 more rows
 ```
+
+For a quick sanity check, let’s make sure that the points for the
+individual events (the variables with the `_pts` suffixes) add up to
+`mp_points`. This could be *a bit* off, due to various penalties in the
+rules and regulations that, theoretically, might be deducted from the
+final score and not from an individual event. But that should be an
+anomaly.
+
+``` r
+m_mp_finals %>%
+  select(c(rank, ends_with("_pts"), mp_points)) %>%
+  group_by(rank) %>%
+  mutate("event_pt_sum" = sum(fencing_pts, swim_pts, riding_pts, laser_run_pts))
+#> # A tibble: 36 x 7
+#> # Groups:   rank [36]
+#>     rank fencing_pts swim_pts riding_pts laser_run_pts mp_points event_pt_sum
+#>    <dbl>       <dbl>    <dbl>      <dbl>         <dbl>     <dbl>        <dbl>
+#>  1     1         256      302        300           577      1435         1435
+#>  2     2         262      294        300           570      1426         1426
+#>  3     3         196      305        292           624      1417         1417
+#>  4     4         227      284        297           604      1412         1412
+#>  5     5         217      296        300           596      1409         1409
+#>  6     6         214      306        284           603      1407         1407
+#>  7     7         244      300        286           575      1405         1405
+#>  8     8         228      300        273           602      1403         1403
+#>  9     9         233      304        259           605      1401         1401
+#> 10    10         214      297        272           615      1398         1398
+#> # … with 26 more rows
+```
+
+Well, that looks OK… Mysteries of the modern pentathlon abound.
