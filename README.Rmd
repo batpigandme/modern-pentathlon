@@ -136,6 +136,8 @@ glimpse(w_mp_finals)
 
 Huh! Now that I look at it this way, it seems that I _still_ don't understand how that last part works. Clearly I need to go back and review the rules and regulations of the Modern Pentathlon.
 
+## All together now
+
 To show you what this would all look like in one _long_ series of pipes, I'll use the results from the same Excel file for the _Men's_ finals. (Caution: A series of pipes this long is likely hazardous to your health...also, you shouldn't copy and paste this much code in real life).
 
 ```{r mens-finals}

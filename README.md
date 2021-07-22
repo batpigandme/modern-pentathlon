@@ -355,6 +355,8 @@ Huh! Now that I look at it this way, it seems that I *still* don’t
 understand how that last part works. Clearly I need to go back and
 review the rules and regulations of the Modern Pentathlon.
 
+## All together now
+
 To show you what this would all look like in one *long* series of pipes,
 I’ll use the results from the same Excel file for the *Men’s* finals.
 (Caution: A series of pipes this long is likely hazardous to your
