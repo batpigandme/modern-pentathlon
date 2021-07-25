@@ -138,7 +138,7 @@ Huh! Now that I look at it this way, it seems that I _still_ don't understand ho
 
 ## All together now
 
-To show you what this would all look like in one _long_ series of pipes, I'll use the results from the same Excel file for the _Men's_ finals. (Caution: A series of pipes this long is likely hazardous to your health...also, you shouldn't copy and paste this much code in real life).
+To show you what this would all look like in one _long_ series of pipes, I'll use the results from the same Excel file for the _Men's_ finals. (⚠️ Caution: A series of pipes this long is likely hazardous to your health...also, you shouldn't copy and paste this much code in real life).
 
 ```{r mens-finals}
 m_mp_finals <- drive_get("Competition_Results_Exports_UIPM_2021_Pentathlon_World_Championships") %>%
@@ -190,4 +190,13 @@ m_mp_finals %>%
 
 Well, that looks OK... Mysteries of the modern pentathlon abound.
 
+## Learn more (about the R packages)
 
+The ever-excellent Jenny Bryan (author of the gargle, googledrive, and googlesheets4 packages) has written blog posts highlighting the latest (as of this writing, `r Sys.Date()`) changes in gogogledrive, and gargle:  
+
+* [googledrive 2.0.0](https://www.tidyverse.org/blog/2021/07/googledrive-2-0-0/)  
+* [gargle 1.2.0](https://www.tidyverse.org/blog/2021/07/gargle-1-2-0/)  
+
+A post on [googlesheets4 1.0.0](https://googlesheets4.tidyverse.org/news/index.html#googlesheets4-1-0-0-2021-07-21) is in the pipeline, and will be out on the [tidyverse blog](https://www.tidyverse.org/blog/) soon.
+
+I cannot say enough good things about [Sam Firke](https://samfirke.com/)'s [janitor](https://sfirke.github.io/janitor/) package&emdash;so, be sure to peep that, too.

@@ -136,9 +136,12 @@ and read in the sheet with
 ``` r
 w_finals_df <- drive_get("Competition_Results_Exports_UIPM_2021_Pentathlon_World_Championships") %>%
   read_sheet(sheet = "Women Finals")
+#> Auto-refreshing stale OAuth token.
 #> ✓ The input `path` resolved to exactly 1 file.
-#> Reading from "Competition_Results_Exports_UIPM_2021_Pentathlon_World_Championships"
-#> Range "'Women Finals'"
+#> Auto-refreshing stale OAuth token.
+#> ✓ Reading from
+#>   "Competition_Results_Exports_UIPM_2021_Pentathlon_World_Championships".
+#> ✓ Range ''Women Finals''.
 ```
 
 And let’s take a quick peek at what that looks like…
@@ -357,7 +360,7 @@ review the rules and regulations of the Modern Pentathlon.
 
 To show you what this would all look like in one *long* series of pipes,
 I’ll use the results from the same Excel file for the *Men’s* finals.
-(Caution: A series of pipes this long is likely hazardous to your
+(⚠️ Caution: A series of pipes this long is likely hazardous to your
 health…also, you shouldn’t copy and paste this much code in real life).
 
 ``` r
@@ -387,8 +390,9 @@ m_mp_finals <- drive_get("Competition_Results_Exports_UIPM_2021_Pentathlon_World
   mutate(finish_time = lr_secs + time_difference) %>%
   select(-lr_mins)
 #> ✓ The input `path` resolved to exactly 1 file.
-#> Reading from "Competition_Results_Exports_UIPM_2021_Pentathlon_World_Championships"
-#> Range "'Men Finals'"
+#> ✓ Reading from
+#>   "Competition_Results_Exports_UIPM_2021_Pentathlon_World_Championships".
+#> ✓ Range ''Men Finals''.
 
 glimpse(m_mp_finals)  
 #> Rows: 36
@@ -474,3 +478,23 @@ m_mp_finals %>%
 ```
 
 Well, that looks OK… Mysteries of the modern pentathlon abound.
+
+## Learn more (about the R packages)
+
+The ever-excellent Jenny Bryan (author of the gargle, googledrive, and
+googlesheets4 packages) has written blog posts highlighting the latest
+(as of this writing, 2021-07-25) changes in gogogledrive, and gargle:
+
+-   [googledrive
+    2.0.0](https://www.tidyverse.org/blog/2021/07/googledrive-2-0-0/)  
+-   [gargle 1.2.0](https://www.tidyverse.org/blog/2021/07/gargle-1-2-0/)
+
+A post on [googlesheets4
+1.0.0](https://googlesheets4.tidyverse.org/news/index.html#googlesheets4-1-0-0-2021-07-21)
+is in the pipeline, and will be out on the [tidyverse
+blog](https://www.tidyverse.org/blog/) soon.
+
+I cannot say enough good things about [Sam
+Firke](https://samfirke.com/)’s
+[janitor](https://sfirke.github.io/janitor/) package&emdash;so, be sure
+to peep that, too.
