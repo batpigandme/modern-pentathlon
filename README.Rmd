@@ -199,4 +199,4 @@ The ever-excellent Jenny Bryan (author of the gargle, googledrive, and googleshe
 
 A post on [googlesheets4 1.0.0](https://googlesheets4.tidyverse.org/news/index.html#googlesheets4-1-0-0-2021-07-21) is in the pipeline, and will be out on the [tidyverse blog](https://www.tidyverse.org/blog/) soon.
 
-I cannot say enough good things about [Sam Firke](https://samfirke.com/)'s [janitor](https://sfirke.github.io/janitor/) package&emdash;so, be sure to peep that, too.
+I cannot say enough good things about [Sam Firke](https://samfirke.com/)'s [janitor](https://sfirke.github.io/janitor/) package&mdash;so, be sure to peep that, too.

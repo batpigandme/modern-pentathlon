@@ -496,5 +496,5 @@ blog](https://www.tidyverse.org/blog/) soon.
 
 I cannot say enough good things about [Sam
 Firke](https://samfirke.com/)’s
-[janitor](https://sfirke.github.io/janitor/) package&emdash;so, be sure
-to peep that, too.
+[janitor](https://sfirke.github.io/janitor/) package—so, be sure to peep
+that, too.
