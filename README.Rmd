@@ -16,6 +16,16 @@ knitr::opts_chunk$set(
 
 Playing around with results from [Union Internationale de Pentathlon Moderne (UIPM) 2021 Pentathlon World Championships](https://www.uipmworld.org/event/uipm-2021-pentathlon-world-championships).
 
+## 📺 TidyX Episode 69
+
+Ellis and Patrick were kind enough to have me as a guest on their TidyX screencast to go through most of the code that's in this document. You can see the episode on YouTube here, [**TidyX Episode 69 | Modern Pentathlons with Mara Averick**](https://youtu.be/1356s1-as4o).
+
+Here's a pretty picture of what it looks like (plus some random graphics I tossed on top):
+
+![Screencap of TidyX Episode 69 - Modern Pentathlon with title overlaid on top, thumbnail of TidyX, and emoji for fencing, swimming, riding, running, and the water gun.](https://i.imgur.com/dfRWiIT.png)
+
+OK, on with the story…
+
 ## Motivation
 
 ### Part 1: I don't get it!

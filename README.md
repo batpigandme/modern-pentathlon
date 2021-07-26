@@ -7,6 +7,22 @@ Playing around with results from [Union Internationale de Pentathlon
 Moderne (UIPM) 2021 Pentathlon World
 Championships](https://www.uipmworld.org/event/uipm-2021-pentathlon-world-championships).
 
+## 📺 TidyX Episode 69
+
+Ellis and Patrick were kind enough to have me as a guest on their TidyX
+screencast to go through most of the code that’s in this document. You
+can see the episode on YouTube here, [**TidyX Episode 69 \| Modern
+Pentathlons with Mara Averick**](https://youtu.be/1356s1-as4o).
+
+Here’s a pretty picture of what it looks like (plus some random graphics
+I tossed on top):
+
+![Screencap of TidyX Episode 69 - Modern Pentathlon with title overlaid
+on top, thumbnail of TidyX, and emoji for fencing, swimming, riding,
+running, and the water gun.](https://i.imgur.com/dfRWiIT.png)
+
+OK, on with the story…
+
 ## Motivation
 
 ### Part 1: I don’t get it!
@@ -483,7 +499,7 @@ Well, that looks OK… Mysteries of the modern pentathlon abound.
 
 The ever-excellent Jenny Bryan (author of the gargle, googledrive, and
 googlesheets4 packages) has written blog posts highlighting the latest
-(as of this writing, 2021-07-25) changes in gogogledrive, and gargle:
+(as of this writing, 2021-07-26) changes in gogogledrive, and gargle:
 
 -   [googledrive
     2.0.0](https://www.tidyverse.org/blog/2021/07/googledrive-2-0-0/)  
